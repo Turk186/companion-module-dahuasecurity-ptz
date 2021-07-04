@@ -196,6 +196,9 @@ class instance extends instance_skel {
 			'stop':           { label: 'PTZ Stop' },
 			'zoomI':          { label: 'Zoom In' },
 			'zoomO':          { label: 'Zoom Out' },
+			'zoomIstop':          { label: 'Stop Zoom In' },
+			'zoomOstop':          { label: 'Stop Zoom Out' },
+			
 			'focusN':         { label: 'Focus Near' },
 			'focusF':         { label: 'Focus Far' },
 			'preset':          { label: 'Goto preset' ,
@@ -343,6 +346,18 @@ class instance extends instance_skel {
 				param = 'ZoomWide';
 				self.ptzMove(param, cmd, 0);
 				break;
+				
+			case 'zoomIstop':
+				cmd = 'stop';
+				param = 'ZoomTele';
+				self.ptzMove(param, cmd, 0);
+				break;
+			case 'zoomOstop':
+				cmd = 'stop';
+				param = 'ZoomWide';
+				self.ptzMove(param, cmd, 0);
+				break;
+
 
 			case 'focusN':
 				cmd = 'start';
@@ -355,6 +370,7 @@ class instance extends instance_skel {
 				param = 'FocusFar';
 				self.ptzMove(param, cmd, 0);
 				break;
+				
 
 			case 'preset':
 				cmd = 'start';
