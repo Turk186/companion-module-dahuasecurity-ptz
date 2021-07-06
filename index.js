@@ -196,12 +196,14 @@ class instance extends instance_skel {
 			'stop':           { label: 'PTZ Stop' },
 			'zoomI':          { label: 'Zoom In' },
 			'zoomO':          { label: 'Zoom Out' },
-			'zoomIstop':          { label: 'Stop Zoom In' },
-			'zoomOstop':          { label: 'Stop Zoom Out' },
+			'zoomIstop':      { label: 'Stop Zoom In' },
+			'zoomOstop':      { label: 'Stop Zoom Out' },
 			
 			'focusN':         { label: 'Focus Near' },
 			'focusF':         { label: 'Focus Far' },
-			'preset':          { label: 'Goto preset' ,
+			'startrecord':    { label: 'Start Record'},
+			'stoprecord':     { label: 'Stop Record'},
+			'preset':         { label: 'Goto preset' ,
 				options: [
 					{
 						type: 'textinput',
@@ -273,6 +275,30 @@ class instance extends instance_skel {
 
 	}
 
+	ptzConfig(actction,paramName,paramValue) {
+		var self = this;
+
+		if ((action !== 'getConfig') && (action !== 'setConfig')) {
+			self.log('warn', 'INVALID Config COMMAND!');
+			return 0;
+		}
+		var uri = self.BASEURI + '/cgi-bin/ptz.cgi?action=' + action;
+
+		uri += '&' + paramName + '=' + paramValue;
+
+		//self.log('debug', uri);
+
+		request(uri, function (error, response, body) {
+
+			if ((error) || (response.statusCode !== 200) || (body.trim() !== "OK")) {
+				self.log('warn', 'Send Error: ' + error);
+				// Start init to reconnect to cam because probably network lost
+				self.init();
+
+			}
+			}).auth(self.config.user,self.config.password,false);
+
+	}
 
 	action(action) {
 		var self = this;
@@ -371,6 +397,16 @@ class instance extends instance_skel {
 				self.ptzMove(param, cmd, 0);
 				break;
 				
+			case "startrecord":
+				cmd = 'setConfig';	
+				param = "RecordMode[0].Mode";
+				self.ptzConfig(cmd,param,1);
+				break
+				
+			case "stoprecord"
+				cmd = 'setConfig';
+				param = "RecordMode[0].Mode";
+				self.ptzConfig(cmd,param,2);
 
 			case 'preset':
 				cmd = 'start';
